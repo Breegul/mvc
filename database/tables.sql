@@ -3,7 +3,7 @@ DROP TABLE IF EXISTS mushroom;
 
 CREATE TABLE mushroom (
     mushroom_id INT GENERATED ALWAYS AS IDENTITY,
-    mushroom_name VARCHAR(10) NOT NULL,
+    mushroom_name VARCHAR(20) NOT NULL,
     age INT DEFAULT 0,
     mushroom_role VARCHAR(50),
     PRIMARY KEY (mushroom_id)

@@ -2,28 +2,40 @@ let db = require("../database/connect");
 
 class Mushroom {
 
-    constructor({ id, name, species, age, role, friends }) {
-        this.id = id;
-        this.name = name;
-        this.species = species;
+    constructor({ mushroom_id, mushroom_name, age, mushroom_role, mushroom_friends }) {
+        this.id = mushroom_id;
+        this.name = mushroom_name;
         this.age = age;
-        this.role = role;
-        this.friends = friends;
+        this.role = mushroom_role;
 
     }
 
+    
+    static async query(q) {
+        
+        await db.query(q, (err, res)=>{
+            if(err){
+                console.log(err.stack);
+            } else {
+                const r = Object.entries(res);
+                console.log(r[0], r[1]);
+            }
+        });
+    }
+    
     static async getAll() {
 
         // Return all relevant data as mushroom objects
         const res = await db.query("SELECT * from mushroom;");
-        console.log(res);
-        return [];
+        return res.rows.map(m=>new Mushroom(m));
     }
 
-    static getOneById(id) {
+    static async getOneById(id) {
 
         // Get the relevant mushroom
-        const m = db.find(m => m.id == id);
+        const res = await db.query("SELECT * FROM mushroom WHERE mushroom_id = $1", [id]);
+
+        const m = res.rows[0];
 
         if (m) {
             // Convert to mushroom object and return
@@ -33,17 +45,32 @@ class Mushroom {
         }
     }
 
-    static create(data) {
+    static async create (data) {
+        const q = {
+            text: "INSERT INTO mushroom(mushroom_name, age, mushroom_role) VALUES($1, $2, $3)",
+            values: [data.mushroom_name, data.age, data.mushroom_role]
+        }
+        // test+add handling for empty values
+        this.query(q);
 
-        data.id = db.length + 1;
-        db.push(data);
-        return new Mushroom(data);
     }
+    
 
-    delete() {
+    async delete() {
+        const q = {
+            text: "DELETE FROM mushroom WHERE mushroom_id = $1",
+            values: [this.id]
+        };
 
-        db = db.filter(m => m.id != this.id);
-        return true;
+        await db.query(q, (err, res)=>{
+            if(err){
+                console.log(err.stack);
+                return false;
+            } else {
+                Mushroom.log(res);
+                return true;
+            }
+        });
     }
 
     speak() {
@@ -51,26 +78,35 @@ class Mushroom {
         console.log(`The mushroom says its name is ${this.name}`);
     }
 
-    changeRole(newRole) {
-        this.role = newRole;
-
-        db = db.map(m => m.id == this.id ? this : m);
-
+    // Add changeName
+    async changeRole(newRole) {
+        const q = {
+            text: "UPDATE mushroom SET mushroom_role = $1 WHERE mushroom_id = $2;",
+            values: [newRole, this.id]
+        }
+        await db.query(q, (err, res)=>{
+            if(err){
+                console.log(err.stack);
+            } else {
+                this.log(res);
+            }
+        });
         return this;
     }
+    
 
-    // Send req to /:id (m1) with body of friend (m2)
-    makeFriends(friendId){
-        if(!this.friends.includes(friendId)){
-            this.friends.push(friendId);
-        }
-        // currId = this.id;
-        // db = db.map(m => m.id == friendId?m.friends.push(currId):m);
+    // // Send req to /:id (m1) with body of friend (m2)
+    // makeFriends(friendId){
+    //     if(!this.friends.includes(friendId)){
+    //         this.friends.push(friendId);
+    //     }
+    //     // currId = this.id;
+    //     // db = db.map(m => m.id == friendId?m.friends.push(currId):m);
 
-    }
-    breakFriends(m1, m2){
+    // }
+    // breakFriends(m1, m2){
 
-    }
+    // }
 }
 
 module.exports = Mushroom;

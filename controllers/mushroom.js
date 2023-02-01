@@ -1,15 +1,15 @@
 const { getOneById } = require("../models/mushroom");
 const Mushroom = require("../models/mushroom");
 
-function index(req, res) {
-    const data = Mushroom.getAll();
+async function index(req, res) {
+    const data = await Mushroom.getAll();
     res.json(data);
 }
 
-function show(req, res) {
+async function show(req, res) {
     const id = req.params.id;
     try {
-        const data = Mushroom.getOneById(id);
+        const data = await Mushroom.getOneById(id);
         res.json(data);
     } catch (e) {
         console.log(e.message);
@@ -21,22 +21,24 @@ function show(req, res) {
     
 }
 
-function create(req, res) {
+async function create(req, res) {
     const newMush = req.body;
-    const data = Mushroom.create(newMush);
+    const data = await Mushroom.create(newMush);
     return res.json(data);
 }
 
-function destroy(req, res) {
+async function destroy(req, res) {
     const id = req.params.id;
     try {
-        const m = Mushroom.getOneById(id);
+        const m = await Mushroom.getOneById(id);
         const deleted = m.delete();
+        
         if(deleted){
-            res.sendStatus(204);
+            res.status(204).send({"message": m.name + " destroyed. You monster."});
         } else {
             throw new Error("Deletion failed.");
         }
+
     } catch (e) {
         console.log(e.message);
         res.status(404).json({
@@ -46,37 +48,25 @@ function destroy(req, res) {
     }
 }
 
-function update(req, res) {
+async function update(req, res) {
     const id = req.params.id;
     try {
-        const m = Mushroom.getOneById(id);
-        if(req.body.newRole){
-            const newRole = req.body.newRole;
+        let m = await Mushroom.getOneById(id);
 
-            if(newRole.length < 2){
-                throw new Error("Invalid role");
-            }
-            const changed = m.changeRole(newRole);
+        const newRole = req.body.newRole;
+        if(newRole && newRole.length < 2){
+            throw new Error("Invalid role");
+        } else if (newRole) {
+            m = m.changeRole(newRole);
         }
 
-        if(req.body.newFriend){
-            const friendId = req.body.newFriend;
-            if(typeof friendId != "number"){
-                throw new Error("New friend must be a single number id");
-            }
-
-            const mFriend = Mushroom.getOneById(friendId);
-            m.makeFriends(friendId);
-            mFriend.makeFriends(parseInt(id));
-        }
-        
         res.json(m);
 
     } catch (e) {
         console.log(e.message);
         res.status(404).json({
             error: true,
-            message: `Unable to locate mushroom with id ${id}`
+            message: e
         });
     }
 }
