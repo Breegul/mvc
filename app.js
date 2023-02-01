@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const mushroomRouter = require("./routers/mushroom");
+const friendshipRouter = require("./routers/friendship");
 
 const app = express();
 
@@ -16,5 +17,6 @@ app.get("/", (req, res) => {
 })
 
 app.use("/mushrooms", mushroomRouter);
+app.use("/friends", friendshipRouter);
 
 module.exports = app;

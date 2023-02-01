@@ -57,7 +57,7 @@ class Mushroom {
 
     }
 
-    async delete() {
+    async destroy() {
         const q = {
             text: "DELETE FROM mushroom WHERE mushroom_id = $1",
             values: [this.id]

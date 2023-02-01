@@ -1,4 +1,3 @@
-const { getOneById } = require("../models/mushroom");
 const Mushroom = require("../models/mushroom");
 
 async function index(req, res) {
@@ -11,8 +10,8 @@ async function show(req, res) {
     try {
         const data = await Mushroom.getOneById(id);
         res.json(data);
-    } catch (e) {
-        console.log(e.message);
+    } catch (err) {
+        console.log(err.message);
         res.status(404).json({
             error: true,
             message: `Unable to locate mushroom with id ${id}`
@@ -31,7 +30,7 @@ async function destroy(req, res) {
     const id = req.params.id;
     try {
         const m = await Mushroom.getOneById(id);
-        const deleted = await m.delete();
+        const deleted = await m.destroy();
         
         res.json({message: m.name + " destroyed. You monster."});
 

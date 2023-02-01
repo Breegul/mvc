@@ -1,28 +1,16 @@
-let db = require("../database/connect");
+const { Router } = require("express");
 
-class Friendship {
+const friendshipController = require("../controllers/friendship");
 
-    constructor({friendship_id, first_friend_id, second_friend_id}){
-        this.friendship_id = friendship_id;
-        this.first_friend_id = first_friend_id;
-        this.second_friend_id = second_friend_id;
-    }
+// Handles all requests to /friendships
+const friendshipRouter = Router();
 
-    static async getAll(){
-        const res = await db.query("SELECT * from friendship;");
-        return res.rows.map(f=>new Friend(f));
-    }
+// Route definitions
+friendshipRouter.get("/", friendshipController.index); // /friendships/
+friendshipRouter.get("/:id", friendshipController.show);
+friendshipRouter.post("/", friendshipController.create);
+friendshipRouter.delete("/:id", friendshipController.destroy);
+// friendshipRouter.patch("/:id", friendshipController.update);
 
-    static async getById(id){
-        const res = await db.query("SELECT * FROM friendship WHERE friendship_id = $1", [id]);
 
-    }
-
-    static async create(data){
-
-    }
-
-    static async destroy(id){
-
-    }
-}
+module.exports = friendshipRouter

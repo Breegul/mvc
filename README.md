@@ -39,12 +39,8 @@ This app requires a `.env` file to run locally. It needs the following informati
 | `/mushrooms/:id` | `DELETE` | Delete a mushroom | 
 | `/mushrooms/:id` | `PATCH` | Update a mushroom | 
 
-| `/mushrooms/:id/friends`| `GET` | List all friends of a specific mushroom |
+| `/mushrooms/:id/friends`| `GET` | List all friends of a specific mushroom | Not implemented
 | `/friends`| `GET` | List all friendships |
 | `/friends`| `POST` | Create a new friendship |
 | `/friends/:id`| `GET` | View a specific friendship |
 | `/friends/:id`| `DELETE` | Delete a friendship |
-
-- [] friendshipRouter
-- [] friendshipController
-- [] friendshipModel
