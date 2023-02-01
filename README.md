@@ -6,7 +6,19 @@ A project about the savage mushroom-people who live in the caverns below the cit
 
 ## Installation
 
+```bash
+PORT=XXXX
+DB_URL=XXXXXXXXXXXX
+```
+
 `npm run install -D`
+
+`npm run setup`
+
+## Environment
+
+This app requires a `.env` file to run locally. It needs the following information
+
 
 ## Development server
 

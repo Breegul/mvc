@@ -1,4 +1,4 @@
-let db = require("../database/mushrooms");
+let db = require("../database/connect");
 
 class Mushroom {
 
@@ -12,10 +12,12 @@ class Mushroom {
 
     }
 
-    static getAll() {
+    static async getAll() {
 
         // Return all relevant data as mushroom objects
-        return db.map(m => new Mushroom(m));
+        const res = await db.query("SELECT * from mushroom;");
+        console.log(res);
+        return [];
     }
 
     static getOneById(id) {
