@@ -10,31 +10,33 @@ class Mushroom {
 
     }
 
-    
     static async query(q) {
-        
-        await db.query(q, (err, res)=>{
-            if(err){
-                console.log(err.stack);
-            } else {
-                const r = Object.entries(res);
-                console.log(r[0], r[1]);
-            }
-        });
+        try {
+            const res = await db.query(q);
+            const r = Object.entries(res);
+            console.log(r[0], r[1]);
+            return res;
+        } catch (err) {
+            console.log(err.stack);
+        }
     }
-    
+
     static async getAll() {
+        const q = { text: "SELECT * from mushroom;" };
 
         // Return all relevant data as mushroom objects
-        const res = await db.query("SELECT * from mushroom;");
+        const res = await this.query(q);
         return res.rows.map(m=>new Mushroom(m));
     }
 
     static async getOneById(id) {
-
         // Get the relevant mushroom
-        const res = await db.query("SELECT * FROM mushroom WHERE mushroom_id = $1", [id]);
+        const q = {
+            text: "SELECT * FROM mushroom WHERE mushroom_id = $1", 
+            values: [id]
+        }
 
+        const res = await this.query(q);
         const m = res.rows[0];
 
         if (m) {
@@ -45,7 +47,7 @@ class Mushroom {
         }
     }
 
-    static async create (data) {
+    static async create(data) {
         const q = {
             text: "INSERT INTO mushroom(mushroom_name, age, mushroom_role) VALUES($1, $2, $3)",
             values: [data.mushroom_name, data.age, data.mushroom_role]
@@ -54,7 +56,6 @@ class Mushroom {
         this.query(q);
 
     }
-    
 
     async delete() {
         const q = {
@@ -62,39 +63,24 @@ class Mushroom {
             values: [this.id]
         };
 
-        await db.query(q, (err, res)=>{
-            if(err){
-                console.log(err.stack);
-                return false;
-            } else {
-                Mushroom.log(res);
-                return true;
-            }
-        });
+        Mushroom.query(q);
+        return this;
     }
-
-    speak() {
-
-        console.log(`The mushroom says its name is ${this.name}`);
-    }
-
+    
     // Add changeName
     async changeRole(newRole) {
         const q = {
             text: "UPDATE mushroom SET mushroom_role = $1 WHERE mushroom_id = $2;",
             values: [newRole, this.id]
         }
-        await db.query(q, (err, res)=>{
-            if(err){
-                console.log(err.stack);
-            } else {
-                this.log(res);
-            }
-        });
+        Mushroom.query(q);
         return this;
     }
     
-
+    speak() {
+        console.log(`The mushroom says its name is ${this.name}`);
+    }
+    
     // // Send req to /:id (m1) with body of friend (m2)
     // makeFriends(friendId){
     //     if(!this.friends.includes(friendId)){

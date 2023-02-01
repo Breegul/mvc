@@ -31,13 +31,10 @@ async function destroy(req, res) {
     const id = req.params.id;
     try {
         const m = await Mushroom.getOneById(id);
-        const deleted = m.delete();
+        const deleted = await m.delete();
         
-        if(deleted){
-            res.status(204).send({"message": m.name + " destroyed. You monster."});
-        } else {
-            throw new Error("Deletion failed.");
-        }
+        res.json({message: m.name + " destroyed. You monster."});
+
 
     } catch (e) {
         console.log(e.message);
@@ -57,9 +54,9 @@ async function update(req, res) {
         if(newRole && newRole.length < 2){
             throw new Error("Invalid role");
         } else if (newRole) {
-            m = m.changeRole(newRole);
+            m = await m.changeRole(newRole);
         }
-
+        console.log("m", m);
         res.json(m);
 
     } catch (e) {

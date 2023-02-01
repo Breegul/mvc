@@ -28,8 +28,23 @@ This app requires a `.env` file to run locally. It needs the following informati
 
 `npm run start`
 
-## Notes
+## API
 
-### Model-View-Controller (MVC)
+| Route | Method | Function |
+| --- | --- | --- |
+| `/` | `GET` | Welcome message | 
+| `/mushrooms` | `GET` | List all mushrooms | 
+| `/mushrooms` | `POST` | Create a mushroom | 
+| `/mushrooms/:id` | `GET` | View a specific mushroom | 
+| `/mushrooms/:id` | `DELETE` | Delete a mushroom | 
+| `/mushrooms/:id` | `PATCH` | Update a mushroom | 
 
-### RESTful APIs
+| `/mushrooms/:id/friends`| `GET` | List all friends of a specific mushroom |
+| `/friends`| `GET` | List all friendships |
+| `/friends`| `POST` | Create a new friendship |
+| `/friends/:id`| `GET` | View a specific friendship |
+| `/friends/:id`| `DELETE` | Delete a friendship |
+
+- [] friendshipRouter
+- [] friendshipController
+- [] friendshipModel

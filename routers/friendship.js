@@ -8,19 +8,21 @@ class Friendship {
         this.second_friend_id = second_friend_id;
     }
 
-    static getAll(){
+    static async getAll(){
+        const res = await db.query("SELECT * from friendship;");
+        return res.rows.map(f=>new Friend(f));
+    }
+
+    static async getById(id){
+        const res = await db.query("SELECT * FROM friendship WHERE friendship_id = $1", [id]);
 
     }
 
-    static getById(id){
-
-    }
-    
-    static create(data){
+    static async create(data){
 
     }
 
-    static destroy(id){
+    static async destroy(id){
 
     }
 }
